@@ -1,0 +1,15 @@
+{
+    "employee1" : {
+        "firstname" : "TestEmp",
+        "middlename" : "1",
+        "lastname" : "User",
+        "empid" : "Test01",
+        "username" : "TestEmp",
+        "password" : "TestEmp123"
+    },
+
+    "jobDetails" : {
+        "joineddate" : "2025-19-05",
+        "jobtitle" : "QA Engineer"
+    }
+}

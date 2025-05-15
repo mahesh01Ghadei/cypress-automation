@@ -1,0 +1,10 @@
+{
+  "validuser": {
+    "username": "Admin",
+    "password": "admin123"
+  },
+  "invaliduser": {
+    "username": "adam",
+    "password": "123"
+  }
+}
