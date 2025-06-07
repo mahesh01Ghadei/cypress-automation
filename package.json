@@ -10,7 +10,7 @@
 
     "report:pre": "rimraf cypress/results/ || true",
 
-    "report:post": "npx mochawesome-merge cypress/results/**/*.json > cypress/results/output.json && npx marge cypress/results/output.json -f index -o cypress/results/cypress-mochawesome-reporter"
+    "report:post": "npx mochawesome-merge cypress/results/**/*.json > cypress/results/output.json && npx marge cypress/results/output.json -f index -o cypress/results/cypress-mochawesome-reporter || echo '⚠️ Report merge failed, skipping.'"
 
 
   },
