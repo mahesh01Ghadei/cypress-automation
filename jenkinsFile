@@ -1,0 +1,111 @@
+pipeline {
+    agent any
+
+    environment {
+        CYPRESS_INSTALL_BINARY = ' '
+    }
+
+    parameters {
+        string(
+            name: 'TEST_SPEC', 
+            defaultValue: '*', 
+            description: 'Enter the name of the test spec without file extension (e.g., LoginTest). Use "*" to run all test specs.'
+        )
+        string(
+            name: 'RECORD_TESTS', 
+            defaultValue: '--record false', 
+            description: 'Pass --record to record the test runs to Cypress Dashboard.'
+        )
+        choice(
+            name: 'TEST_ENVIRONMENT', 
+            choices: ['local'], 
+            description: 'Specify the test environment.'
+        )
+        choice(
+            name: 'BROWSER', 
+            choices: ['electron', 'chrome', 'edge', 'firefox'], 
+            description: 'Browser for running tests.'
+        )
+        choice(
+            name: 'BROWSER_MODE', 
+            choices: ['headless', 'headed'], 
+            description: 'Run headless or headed mode.'
+        )
+        choice(
+            name: 'TAG', 
+            choices: ['regression', 'sanity'], 
+            description: 'Filter tests by tag.'
+        )
+    }
+
+    stages {
+        stage('Stage 1 - Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/mahesh01Ghadei/cypress-automation'
+                echo 'Code checked out.'
+            }
+        }
+
+        stage('Stage 2 - Install Dependencies') {
+            steps {
+                bat 'npm install'
+                bat 'npx cypress install'
+                echo 'Dependencies installed.'
+            }
+        }
+
+        stage('Stage 3 - Clear Old Reports') {
+            steps {
+                bat "npm run report:pre"
+            }
+        }
+
+        stage('Stage 4 - Run Cypress Tests') {
+            steps {
+                script {
+                    def specParam = params.TEST_SPEC == '*' ? '' : "--spec cypress/e2e/tests/${params.TEST_SPEC}.cy.js"
+
+                    echo "Running tests with spec: ${params.TEST_SPEC}, Browser: ${params.BROWSER}, Tag: ${params.TAG}, Env: ${params.TEST_ENVIRONMENT}"
+                    bat "npx cypress run ${specParam} --${params.BROWSER_MODE} --browser ${params.BROWSER} --env environmentName=${params.TEST_ENVIRONMENT},grepTags=${params.TAG} ${params.RECORD_TESTS}"
+                }
+            }
+        }
+
+        stage('Stage 5 - Merge Mochawesome Reports') {
+            steps {
+                script {
+                    // Check if JSON report files exist before merging
+                    def reportExists = fileExists('cypress/reports')
+                    if (reportExists) {
+                        echo 'Merging Mochawesome reports...'
+                        bat 'npm run report:post'
+                    } else {
+                        echo 'No report files found to merge.'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Attempting to publish HTML report...'
+            publishHTML([
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'cypress/results/cypress-mochawesome-reporter',
+                reportFiles: 'index.html',
+                reportName: 'Cypress Mochawesome Report',
+                reportTitles: 'Cypress Test Automation Framework',
+                useWrapperFileDirectly: true
+            ])
+        }
+        success {
+            echo '✔️ Cypress tests passed!'
+        }
+        failure {
+            echo '❌ Cypress tests failed!'
+        }
+    }
+}
