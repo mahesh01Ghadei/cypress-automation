@@ -8,7 +8,10 @@
 
     "test:regression": "cypress run --env grepTags=regression",
 
-    "report:pre": "rimraf cypress/results/ || true"
+    "report:pre": "rimraf cypress/results/ || true",
+
+    "report:post": "npx mochawesome-merge cypress/results/**/*.json > cypress/results/output.json && npx marge cypress/results/output.json -f index -o cypress/results/cypress-mochawesome-reporter"
+
 
   },
 
@@ -45,6 +48,12 @@
     "junit-report-merger": "^6.0.2",
 
     "mocha-junit-reporter": "^2.2.1",
+
+    "mochawesome": "^7.1.3",
+
+    "mochawesome-merge": "^5.0.0",
+
+    "mochawesome-report-generator": "^6.2.0",
 
     "rimraf": "^6.0.1"
 
