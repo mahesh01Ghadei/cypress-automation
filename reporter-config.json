@@ -1,0 +1,17 @@
+{
+
+  "reporterEnabled" : "cypress-mochawesome-reporter , mocha-junit-reporter", 
+    
+  "mochaJunitReporterReporterOptions": {
+		"mochaFile": "cypress/results/junit/results-[hash].xml"
+	},
+  
+  "mochawesomeReporterReporterOptions": {
+    "reportDir": "cypress/results/cypress-mochawesome-reporter",
+    "charts": true,
+    "reportPageTitle": "Orange HRM Test Report",
+    "embeddedScreenshots": true,
+    "inlineAssets": true,
+    "videoOnFailOnly": false
+  }
+}

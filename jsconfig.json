@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {    
+    "typeRoots": ["./node_modules/@types", "./types"] ,
+  },
+
+  "include": [
+    "cypress/**/*.cy.js",           
+    "cypress/support/index.d.ts"
+  ]
+    
+}
